@@ -40,11 +40,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
       //get stored username from db
       $queryUsers = "SELECT username, password FROM credentials WHERE username = $username";
       $resultUser = $link->query($queryUsers);
+      $numRows = $resultUser->num_rows;
+      if(!$numRows){
+        //no user matching username
+        header("Location: index.html");
+        end();
+      }
       $rowUser = $resultUser->fetch_assoc();
-
       if($password == $rowUser['password']){
         echo "Successfully logged in";
+        //header("Location: index.html");
+      } else{
         header("Location: index.html");
+
       }
     }
 
