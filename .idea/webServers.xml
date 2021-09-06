@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b3e436cc-c258-40f0-ac35-cd9a20cffca8" name="Softcare" url="http://localhost">
+        <fileTransfer mountedRoot="C:\wamp64\www\SoftCare" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>
