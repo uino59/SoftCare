@@ -4,7 +4,7 @@ session_start();
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-    header("location: welcome.php");
+    header("location: dashboard.php");
     exit;
 }
 
@@ -58,7 +58,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
       echo "Successfully logged in";
       header("Location: dashboard.php");
       $_SESSION["loggedin"] = true;
-      $_SESSION["usrname"] = "Georgie";
+      $_SESSION["usrname"] = $username; //Replace this with the patient's name pulled from database
     } else {
       header("Location: index.html");
     }
