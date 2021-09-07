@@ -50,7 +50,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$db_password) {
       //no user matching username
-      //header("Location: index.html");
+      //header("Location: index.php");
       //end();
       echo "User not found";
     }
@@ -60,7 +60,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
       $_SESSION["loggedin"] = true;
       $_SESSION["usrname"] = $username; //Replace this with the patient's name pulled from database
     } else {
-      header("Location: index.html");
+      header("Location: index.php");
     }
 
   }
