@@ -29,10 +29,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($username);
   }
 
-  if (empty(trim($username))) {
-    $username_err = "Please enter username.";
+  if (empty(trim($password))) {
+    $password_err = "Please enter username.";
   } else {
-    $username = trim($username);
+    $password = trim($password);
   }
 
   // Validate credentials
@@ -46,12 +46,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_result($db_password);
     $stmt->fetch();
     $stmt->close();
-    echo $db_password;
 
     if (!$db_password) {
       //no user matching username
-      //header("Location: index.php");
-      //end();
       echo "User not found";
     }
     if ($password == $db_password) {
