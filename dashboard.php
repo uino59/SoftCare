@@ -7,8 +7,26 @@ require_once "config.php";
 $db = get_main_db();
 
 $patient_id = "";
+$patient_title = "";
 $patient_first_name = "";
 $patient_last_name = "";
+$patient_phn = "";
+$patient_gender = "";
+$patient_dob = "";
+$patient_address = "";
+$patient_city = "";
+$patient_country = "";
+
+$appointment_time ="";
+$appointment_location_id = "";
+$appointment_location_address = "";
+$appointment_location_city = "";
+$appointment_location_postal = "";
+$appointment_location_name = "";
+$appointment_doctor_id= "";
+$appointment_doctor_title = "";
+$appointment_doctor_first_name = "";
+$appointment_doctor_last_name = "";
 
 $stmt = $db->prepare("SELECT patientId, firstName, lastName FROM patient WHERE phn = ?");
 $stmt->bind_param('s', $_SESSION["usrname"]);
@@ -17,6 +35,26 @@ $stmt->bind_result($patient_id, $patient_first_name, $patient_last_name);
 $stmt->fetch();
 $stmt->close();
 
+$stmt1 = $db->prepare("SELECT time, doctor_doctorId, location_locationId FROM appointment WHERE patient_patientId = ?");
+$stmt1->bind_param('i', $patient_id);
+$stmt1->execute();
+$stmt1->bind_result($appointment_time, $appointment_doctor_id, $appointment_location_id);
+$stmt1->fetch();
+$stmt1->close();
+
+$stmt2 = $db->prepare("SELECT address, city, postal, name FROM location WHERE locationId = ?");
+$stmt2->bind_param('i', $appointment_location_id);
+$stmt2->execute();
+$stmt2->bind_result($appointment_location_address, $appointment_location_city, $appointment_location_postal, $appointment_location_name);
+$stmt2->fetch();
+$stmt2->close();
+
+$stmt3 = $db->prepare("SELECT title, firstName, lastName  FROM doctor WHERE doctorId = ?");
+$stmt3->bind_param('i', $appointment_doctor_id);
+$stmt3->execute();
+$stmt3->bind_result($appointment_doctor_title, $appointment_doctor_first_name, $appointment_doctor_last_name);
+$stmt3->fetch();
+$stmt3->close();
 ?>
 
 <!doctype html>
@@ -248,7 +286,13 @@ $stmt->close();
   </section>
   <section class="grid" id="appointments_content">
     <article><h1>Upcoming Appointments</h1></article>
-    <article></article>
+    <article>
+      <h1> <?php echo $appointment_time?></h1>
+      <h2> <?php echo $appointment_location_name ?></h2>
+      <h2> <?php echo $appointment_location_address?></h2>
+      <h2> <?php echo $appointment_location_city . " " . $appointment_location_postal ?></h2>
+      <h2> <?php echo $appointment_doctor_title . " " . $appointment_doctor_last_name?> </h2>
+    </article>
     <article></article>
     <article></article>
 
