@@ -13,7 +13,7 @@ function get_login_db() {
 }
 
 function get_main_db() {
-  $link = mysqli_connect('localhost', 'root', '', 'softcare_users');
+  $link = mysqli_connect('localhost', 'root', '', 'softcare_data');
 
   // Check connection
   if($link === false){

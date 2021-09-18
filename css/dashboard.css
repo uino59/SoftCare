@@ -299,7 +299,7 @@ body {
 
 .page-content .grid > article {
   display: flex;
-  height: 300px;
+  height: 200px;
   background: var(--page-content-blockColor);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -310,6 +310,13 @@ body {
   grid-column: 1 / -1;
 }
 
+.page-content .grid .message {
+  max-height: 100px;
+}
+
+.page-content .grid .prescription {
+  max-height: 100px;
+}
 
 /* MQ RULES
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
