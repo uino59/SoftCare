@@ -10,7 +10,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 
 // Include config file
 require_once "config.php";
-$link = get_db();
+$link = get_login_db();
 
 
 // fetch variables from post
@@ -40,7 +40,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     //get stored password from db
     $db_password = "";
 
-    $stmt = $link->prepare("SELECT password FROM credentials WHERE username = ?");
+    $stmt = $link->prepare("SELECT password FROM credentials WHERE PHN = ?");
     $stmt->bind_param('s', $_POST['uname']);
     $stmt->execute();
     $stmt->bind_result($db_password);

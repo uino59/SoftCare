@@ -11,7 +11,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 
 <head>
   <meta charset="utf-8">
-  <title>SoftCare Patient Portal</title>
+  <title>SoftCare Login</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
