@@ -477,9 +477,6 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
   </section>
   <section class="grid" id="appointments_content">
     <h1>Upcoming Appointments</h1>
-
-    <article>
-    <h1>Upcoming Appointments</h1>
     <article class="appointments-table">
       <div class="limiter">
         <div class="table100">

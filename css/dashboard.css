@@ -293,7 +293,7 @@ body {
 
 .page-content .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /*grid-template-columns: repeat(2, 1fr);*/
   grid-gap: 30px;
 }
 
@@ -305,11 +305,12 @@ body {
   box-shadow: var(--box-shadow);
 }
 
+/*
 .page-content .grid > article:first-child,
 .page-content .grid > article:last-child {
   grid-column: 1 / -1;
 }
-
+*/
 .page-content .grid .message {
   max-height: 100px;
 }
