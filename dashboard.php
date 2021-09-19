@@ -477,24 +477,36 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
   </section>
   <section class="grid" id="appointments_content">
     <article><h1>Upcoming Appointments</h1></article>
-    <?php
-    for($i = 0; $i < count($appointments); $i++)
-    { ?>
-      <article>
-        <h2> <?php echo $appointments[$i][0] ?> </h2>
-        <h2> <?php echo $appointments[$i][1] ?> </h2>
-        <h2> <?php echo $appointments[$i][2] ?> </h2>
-        <h2> <?php echo $appointments[$i][3] ?> </h2>
-        <h2> <?php echo $appointments[$i][4] ?> </h2>
-        <h2> <?php echo $appointments[$i][5] ?> </h2>
-        <h2> <?php echo $locations[$i][0] ?> </h2>
-        <h2> <?php echo $locations[$i][1] ?> </h2>
-        <h2> <?php echo $locations[$i][2] ?> </h2>
-        <h2> <?php echo $locations[$i][3] ?> </h2>
-        <h2> <?php echo $locations[$i][4] ?> </h2>
-        <h2> <?php echo $locations[$i][5] ?> </h2
-      </article>
-    <?php } ?>
+
+    <article>
+      <div class="limiter">
+        <div class="table100">
+          <table>
+            <thead>
+              <tr class="table100-head">
+                <th class="column2">Date & Time</th>
+                <th class="column1">Reason For Visit</th>
+                <th class="column4">Doctor</th>
+                <th class="column4">Location</th>
+                <th class="column6">Date Scheduled</th>
+              </tr>
+            </thead>
+            <tbody>
+            <?php for($i = 0; $i < count($appointments); $i++){ ?>
+              <tr>
+                <td class="column2"><?php echo $appointments[$i][3] ?></td>
+                <td class="column1"><?php echo $appointments[$i][4] ?></td>
+                <td class="column4"><?php echo $appointments[$i][1] ?></td>
+                <td class="column4"><?php echo $locations[$i][0] . ",<br> " . $locations[$i][1] . ",<br> " . $locations[$i][2] . ",<br>" .
+                    $locations[$i][3] . ",<br>" . $locations[$i][4] . ",<br>" . $locations[$i][5];   ?></td>
+                <td class="column6"><?php echo $appointments[$i][5] ?></td>
+              </tr>
+            <?php } ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </article>
   </section>
 
   <section class="grid" id="messages_content">
