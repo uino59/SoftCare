@@ -29,6 +29,7 @@ $appointment_doctor_title = "";
 $appointment_doctor_first_name = "";
 $appointment_doctor_last_name = "";
 
+//prescription info
 $prescription_medication_id = "";
 $prescription_doctor_id = "";
 $prescription_medication_name = "";
@@ -40,8 +41,19 @@ $prescription_refills_date = "";
 $prescription_doctor_title = "";
 $prescription_doctor_last_name = "";
 
+//messages info
+$message_thread_id = "";
+$message_patient_id = "";
+$message_doctor_id = "";
+$message_body = "";
+$message_time_written = "";
+$message_sender_type = "";
+$message_sender_title = "";
+$message_sender_name = "";
+$message_reciever_title = "";
+$message_reciever_name = "";
 
-
+//populates patient info
 $stmt = $db->prepare("SELECT patientId, firstName, lastName FROM patient WHERE phn = ?");
 $stmt->bind_param('s', $_SESSION["usrname"]);
 $stmt->execute();
@@ -94,8 +106,39 @@ $stmt6->bind_result($prescription_doctor_title, $prescription_doctor_last_name);
 $stmt6->fetch();
 $stmt6->close();
 
+//populates the messages info
 
+$stmt7 = $db->prepare("SELECT threadId, patient_patientId, doctor_doctorId FROM thread WHERE patient_patientId = ?");
+$stmt7->bind_param('i', $patient_id);
+$stmt7->execute();
+//$result = $stmt7->get_result();
+//while ($row = $result->fetch_assoc()) {
+//  array_push($message_thread_id, "7");
+//}
+$stmt7->bind_result($message_thread_id, $message_patient_id, $message_doctor_id);
+$stmt7->fetch();
+$stmt7->close();
 
+$stmt8 = $db->prepare("SELECT body, timeWritten, sender FROM message WHERE thread_threadId = ?");
+$stmt8->bind_param('i', $message_thread_id);
+$stmt8->execute();
+$stmt8->bind_result($message_body, $message_time_written, $message_sender_type);
+$stmt8->fetch();
+$stmt8->close();
+
+$stmt9 = $db->prepare("SELECT title, lastName  FROM doctor WHERE doctorId = ?");
+$stmt9->bind_param('i', $message_doctor_id);
+$stmt9->execute();
+$stmt9->bind_result($message_sender_title, $message_sender_name);
+$stmt9->fetch();
+$stmt9->close();
+
+$stmt10 = $db->prepare("SELECT title, lastName  FROM patient WHERE patientId = ?");
+$stmt10->bind_param('i', $message_patient_id);
+$stmt10->execute();
+$stmt10->bind_result($message_reciever_title, $message_reciever_name);
+$stmt10->fetch();
+$stmt10->close();
 
 ?>
 
@@ -341,7 +384,12 @@ $stmt6->close();
 
   <section class="grid" id="messages_content">
     <article><h1>Your Messages</h1></article>
-    <article class="message">Message 1</article>
+    <article class="message">
+      <h2> <?php echo $message_sender_title . " " . $message_sender_name?> </h2>
+      <h2> <?php echo $message_reciever_title . " " . $message_reciever_name?> </h2>
+      <h2> <?php echo $message_body?> </h2>
+      <h2> <?php echo $message_time_written?> </h2>
+    </article>
     <article class="message">Message 2</article>
     <article class="message">Message 3</article>
     <article class="message">Message 4</article>
@@ -349,7 +397,7 @@ $stmt6->close();
 
   <section class="grid" id="prescriptions_content">
     <article><h1>Your Prescriptions</h1></article>
-    <article class="prescription"><h1> <?php echo $appointment_time?></h1>
+    <article class="prescription">
       <h2> <?php echo $prescription_medication_name . " " . $prescription_dosage ?></h2>
       <h2> <?php echo $prescription_amount?></h2>
       <h2> <?php echo $prescription_instructions ?></h2>
