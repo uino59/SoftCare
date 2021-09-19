@@ -476,7 +476,7 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
     <article>Documents</article>
   </section>
   <section class="grid" id="appointments_content">
-    <article><h1>Upcoming Appointments</h1></article>
+    <h1>Upcoming Appointments</h1>
 
     <article>
       <div class="limiter">
@@ -510,32 +510,51 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
   </section>
 
   <section class="grid" id="messages_content">
-    <article><h1>Your Messages</h1></article>
-    <?php
-    for($i = 0; $i < count($threadMessages); $i++)
-    { ?>
-      <article>
-        <?php
-        for($v = 0; $v < count($threadMessages[$i]); $v++)
-        { ?>
-          <?php if($threadMessages[$i][$v][2] == "patient")
-          { ?>
-            <h2>Sender <?php echo $threads[$i][1] ?> </h2>
-            <h2>Reciever <?php echo $threads[$i][2] ?> </h2>
-            <h2><?php echo $threadMessages[$i][$v][0] ?></h2>
-            <h2><?php echo $threadMessages[$i][$v][1] ?></h2>
-          <?php } ?>
+    <div><h1>Your Messages</h1></div>
 
-          <?php if($threadMessages[$i][$v][2] == "doctor")
-          { ?>
-            <h2>Sender <?php echo $threads[$i][2] ?> </h2>
-            <h2>Reciever <?php echo $threads[$i][1] ?> </h2>
-            <h2><?php echo $threadMessages[$i][$v][0] ?></h2>
-            <h2><?php echo $threadMessages[$i][$v][1] ?></h2>
-           <?php  } ?>
-        <?php } ?>
+      <?php
+      for($i = 0; $i < count($threadMessages); $i++)
+      { ?>
+      <article>
+        <div class="limiter">
+          <div class="table100">
+            <table>
+              <thead>
+              <tr class="table100-head">
+                <th class="column7">To</th>
+                <th class="column7">From</th>
+                <th class="column1">Message</th>
+                <th class="column4">Date Sent</th>
+              </tr>
+              </thead>
+              <tbody>
+                  <?php
+                  for($v = 0; $v < count($threadMessages[$i]); $v++)
+                  { ?>
+                    <tr>
+                    <?php if($threadMessages[$i][$v][2] == "patient")
+                    { ?>
+                      <td class="column7"> <?php echo $threads[$i][1] ?> </td>
+                      <td class="column7"> <?php echo $threads[$i][2] ?> </td>
+                      <td class="column7"> <?php echo $threadMessages[$i][$v][0] ?> </td>
+                      <td class="column4"> <?php echo $threadMessages[$i][$v][1] ?> </td>
+                    <?php } ?>
+
+                    <?php if($threadMessages[$i][$v][2] == "doctor")
+                    { ?>
+                      <td class="column7"> <?php echo $threads[$i][2] ?> </td>
+                      <td class="column7"> <?php echo $threads[$i][1] ?> </td>
+                      <td class="column7"> <?php echo $threadMessages[$i][$v][0] ?> </td>
+                      <td class="column4"> <?php echo $threadMessages[$i][$v][1] ?> </td>
+                     <?php  } ?>
+                    </tr>
+                  <?php } ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </article>
-    <?php } ?>
+      <?php } ?>
   </section>
 
   <section class="grid" id="prescriptions_content">
