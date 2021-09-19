@@ -30,16 +30,18 @@ $appointment_doctor_first_name = "";
 $appointment_doctor_last_name = "";
 
 //prescription info
-$prescription_medication_id = "";
-$prescription_doctor_id = "";
-$prescription_medication_name = "";
-$prescription_dosage = "";
-$prescription_amount = "";
-$prescription_instructions = "";
-$prescription_refills_authorized = "";
-$prescription_refills_date = "";
-$prescription_doctor_title = "";
-$prescription_doctor_last_name = "";
+//     prescriptions[x][0] = patientId
+//                     [1] = doctorId
+//                     [2] = medicationId
+//                     [3] = amount
+//                     [4] = dosage
+//                     [5] = instructions
+//                     [6] = datePrescribed
+//                     [7] = refillsAuthorized
+//                     [8] = refillDate
+//                     [9] = refillRequested
+$prescriptions = array();
+
 
 //messages info
 $message_thread_id = "";
@@ -94,28 +96,56 @@ $stmt3->fetch();
 $stmt3->close();
 
 
+//populates the prescriptions info
 
-// populates the prescription info
-$stmt4 = $db->prepare("SELECT medication_medicationId, dosage, amount, instructions, refillsAuthorized, refillDate, doctor_doctorId  FROM prescription WHERE patient_patientId = ?");
+
+$stmt4 = $db->prepare("SELECT patient_patientId, doctor_doctorId, medication_medicationId, amount, dosage, instructions, datePrescribed, refillsAuthorized, refillDate, refillRequested  FROM prescription WHERE patient_patientId = ?");
 $stmt4->bind_param('i', $patient_id);
 $stmt4->execute();
-$stmt4->bind_result($prescription_medication_id, $prescription_dosage, $prescription_amount, $prescription_instructions, $prescription_refills_authorized, $prescription_refills_date, $prescription_doctor_id);
+$resultPrescriptions = $stmt4->get_result();
+while ($rowPrescriptions = $resultPrescriptions->fetch_array(MYSQLI_NUM)) {
+  $prescriptions[] = $rowPrescriptions;
+}
 $stmt4->fetch();
 $stmt4->close();
 
-$stmt5 = $db->prepare("SELECT name  FROM medication WHERE medicationId = ?");
-$stmt5->bind_param('i', $prescription_medication_id);
-$stmt5->execute();
-$stmt5->bind_result($prescription_medication_name);
-$stmt5->fetch();
-$stmt5->close();
+  //changes the medication_id to medication name
+for($i = 0; $i < count($prescriptions); $i++){
+  $query = $prescriptions[$i][2];
+  $prescription_medication_name = "";
 
-$stmt6 = $db->prepare("SELECT title, lastName  FROM doctor WHERE doctorId = ?");
-$stmt6->bind_param('i', $prescription_doctor_id);
-$stmt6->execute();
-$stmt6->bind_result($prescription_doctor_title, $prescription_doctor_last_name);
-$stmt6->fetch();
-$stmt6->close();
+  $stmt = $db->prepare("SELECT name  FROM medication WHERE medicationId = ?");
+  $stmt->bind_param('i', $query);
+  $stmt->execute();
+  $stmt->bind_result($prescription_medication_name);
+  $stmt->fetch();
+  $stmt->close();
+
+  $prescriptions[$i][2] = $prescription_medication_name;
+}
+
+  //changes the doctor_id to doctor name
+for($i = 0; $i < count($prescriptions); $i++) {
+  $query = $prescriptions[$i][1];
+  $doctor_title = "";
+  $doctor_name = "";
+
+  $stmt = $db->prepare("SELECT title, lastName  FROM doctor WHERE doctorId = ?");
+  $stmt->bind_param('i', $query);
+  $stmt->execute();
+  $stmt->bind_result($doctor_title, $doctor_name);
+  $stmt->fetch();
+  $stmt->close();
+
+  $prescriptions[$i][1] = $doctor_title . " " . $doctor_name;
+}
+
+
+  //changes patient_id to the patient name
+for($i = 0; $i < count($prescriptions); $i++){
+  $prescriptions[$i][0] = $patient_title . " " . $patient_last_name;
+}
+
 
 //populates the messages info
 
@@ -438,15 +468,23 @@ for($i = 0; $i < count($medicalDocuments); $i++){
 
   <section class="grid" id="prescriptions_content">
     <article><h1>Your Prescriptions</h1></article>
-    <article class="prescription">
-      <h2> <?php echo $prescription_medication_name . " " . $prescription_dosage ?></h2>
-      <h2> <?php echo $prescription_amount?></h2>
-      <h2> <?php echo $prescription_instructions ?></h2>
-      <h2> <?php echo $prescription_refills_authorized ?></h2>
-      <h2> <?php echo $prescription_refills_date ?></h2>
-      <h2> <?php echo $prescription_doctor_title. " " . $prescription_doctor_last_name?> </h2>
-    </article>
-    <article class="prescription">Prescription 2</article>
+    <?php
+    for($i = 0; $i < 1; $i++)
+    { ?>
+      <article>
+        <h2> <?php echo $prescriptions[$i][0] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][1] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][2] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][3] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][4] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][5] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][6] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][7] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][8] ?> </h2>
+        <h2> <?php echo $prescriptions[$i][9] ?> </h2>
+      </article>
+    <?php } ?>
+
   </section>
 
   <section class="grid" id="medicaldocs_content">
