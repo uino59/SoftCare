@@ -699,6 +699,11 @@ tbody tr:hover {
  padding-right: 62px;
 }
 
+.column7 {
+ width: 110px;
+ text-align: left;
+}
+
 
 @media screen and (max-width: 992px) {
  table {

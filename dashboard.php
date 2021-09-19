@@ -557,22 +557,41 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
       </article>
     <?php } ?>
 
+
   </section>
 
   <section class="grid" id="medicaldocs_content">
-
-    <?php
-      for($i = 0; $i < count($medicalDocuments); $i++)
-        { ?>
-          <article>
-            <h2> <?php echo $medicalDocuments[$i][0] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][1] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][2] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][3] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][5] ?> </h2>
-            <h2> <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $medicalDocuments[$i][4] ).'"/>'  ?> </h2>
-          </article>
-    <?php } ?>
+    <div><h1>Medical Documents</h1></div>
+    <article>
+      <div class="limiter">
+        <div class="table100">
+          <table>
+            <thead>
+              <tr class="table100-head">
+                <th class="column7">Document Title</th>
+                <th class="column1">Doctors Comments</th>
+                <th class="column7">Image</th>
+                <th class="column4">Doctor</th>
+                <th class="column4">Date Scheduled</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+                for($i = 0; $i < count($medicalDocuments); $i++)
+                  { ?>
+                    <tr>
+                      <td class="column7"> <?php echo $medicalDocuments[$i][2] ?> </td>
+                      <td class="column1"> <?php echo $medicalDocuments[$i][3] ?> </td>
+                      <td class="column7">    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $medicalDocuments[$i][4] ).'"/>'; ?> </td>
+                      <td class="column4"> <?php echo $medicalDocuments[$i][1] ?> </td>
+                      <td class="column4"> <?php echo $medicalDocuments[$i][5] ?> </td>
+                    </tr>
+              <?php } ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </article>
   </section>
 
 
