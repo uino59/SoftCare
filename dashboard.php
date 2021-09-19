@@ -18,16 +18,23 @@ $patient_city = "";
 $patient_country = "";
 
 //appointment info
-$appointment_time ="";
-$appointment_location_id = "";
-$appointment_location_address = "";
-$appointment_location_city = "";
-$appointment_location_postal = "";
-$appointment_location_name = "";
-$appointment_doctor_id= "";
-$appointment_doctor_title = "";
-$appointment_doctor_first_name = "";
-$appointment_doctor_last_name = "";
+//      appointments[x][0] = patientId
+//                     [1] = doctorId
+//                     [2] = locationId
+//                     [3] = appointmentTime
+//                     [4] = reasonForVisit
+//                     [5] = dateScheduled
+//                     [6] = cancellationRequested
+//                     [7] = rescheduleRequested
+$appointments = array();
+//         locations[x][0] = address
+//                     [1] = city
+//                     [2] = province
+//                     [3] = country
+//                     [4] = postal
+//                     [5] = name
+$locations = array();
+
 
 //prescription info
 //     prescriptions[x][0] = patientId
@@ -44,16 +51,17 @@ $prescriptions = array();
 
 
 //messages info
-$message_thread_id = "";
-$message_patient_id = "";
-$message_doctor_id = "";
-$message_body = "";
-$message_time_written = "";
-$message_sender_type = "";
-$message_sender_title = "";
-$message_sender_name = "";
-$message_reciever_title = "";
-$message_reciever_name = "";
+//           threads[x][0] = threadId
+//                     [1] = patientId
+//                     [2] = doctorId
+$threads = array();
+//           threadMessages[x] = x thread
+//           threadMessages[x][y] = y message in x thread
+//           threadMessages[x][y][0] = body of y message in x thread
+//           threadMessages[x][y][1] = timeWritten of y message in x thread
+//           threadMessages[x][y][2] = sender of y message in x thread
+//
+$threadMessages = array();
 
 //medical document info
 //  medicalDocuments[x][0] = patientId
@@ -72,42 +80,61 @@ $stmt->bind_result($patient_id, $patient_title, $patient_first_name, $patient_la
 $stmt->fetch();
 $stmt->close();
 
-//Populates the appointment info
 
-$stmt1 = $db->prepare("SELECT time, doctor_doctorId, location_locationId FROM appointment WHERE patient_patientId = ?");
+
+//Populates the appointment info
+$stmt1 = $db->prepare("SELECT patient_patientId, doctor_doctorId, location_locationId, appointmentTime, reasonForVisit, dateScheduled, cancellationRequested, rescheduleRequested FROM appointment WHERE patient_patientId = ?");
 $stmt1->bind_param('i', $patient_id);
 $stmt1->execute();
-$stmt1->bind_result($appointment_time, $appointment_doctor_id, $appointment_location_id);
+$resultAppointments = $stmt1->get_result();
+while ($rowAppointments = $resultAppointments->fetch_array(MYSQLI_NUM)) {
+  $appointments[] = $rowAppointments;
+}
 $stmt1->fetch();
 $stmt1->close();
 
-$stmt2 = $db->prepare("SELECT address, city, postal, name FROM location WHERE locationId = ?");
-$stmt2->bind_param('i', $appointment_location_id);
-$stmt2->execute();
-$stmt2->bind_result($appointment_location_address, $appointment_location_city, $appointment_location_postal, $appointment_location_name);
-$stmt2->fetch();
-$stmt2->close();
+for($i = 0; $i <count($appointments); $i++) {
+  $query = $appointments[$i][2];
 
-$stmt3 = $db->prepare("SELECT title, firstName, lastName  FROM doctor WHERE doctorId = ?");
-$stmt3->bind_param('i', $appointment_doctor_id);
-$stmt3->execute();
-$stmt3->bind_result($appointment_doctor_title, $appointment_doctor_first_name, $appointment_doctor_last_name);
-$stmt3->fetch();
-$stmt3->close();
+  $stmt = $db->prepare("SELECT address, city, province, country, postal, name FROM location WHERE locationId = ?");
+  $stmt->bind_param('i', $query);
+  $stmt->execute();
+  $resultLocations = $stmt->get_result();
+  while($rowLocations = $resultLocations->fetch_array((MYSQLI_NUM))){
+    $locations[] = $rowLocations;
+  }
+  $stmt->fetch();
+  $stmt->close();
+}
+
+for($i = 0; $i < count($appointments); $i++) {
+  $query = $appointments[$i][1];
+  $doctor_title = "";
+  $doctor_name = "";
+
+  $stmt = $db->prepare("SELECT title, lastName  FROM doctor WHERE doctorId = ?");
+  $stmt->bind_param('i', $query);
+  $stmt->execute();
+  $stmt->bind_result($doctor_title, $doctor_name);
+  $stmt->fetch();
+  $stmt->close();
+
+  $appointments[$i][1] = $doctor_title . " " . $doctor_name;
+}
+
+
 
 
 //populates the prescriptions info
-
-
-$stmt4 = $db->prepare("SELECT patient_patientId, doctor_doctorId, medication_medicationId, amount, dosage, instructions, datePrescribed, refillsAuthorized, refillDate, refillRequested  FROM prescription WHERE patient_patientId = ?");
-$stmt4->bind_param('i', $patient_id);
-$stmt4->execute();
-$resultPrescriptions = $stmt4->get_result();
+$stmt2 = $db->prepare("SELECT patient_patientId, doctor_doctorId, medication_medicationId, amount, dosage, instructions, datePrescribed, refillsAuthorized, refillDate, refillRequested  FROM prescription WHERE patient_patientId = ?");
+$stmt2->bind_param('i', $patient_id);
+$stmt2->execute();
+$resultPrescriptions = $stmt2->get_result();
 while ($rowPrescriptions = $resultPrescriptions->fetch_array(MYSQLI_NUM)) {
   $prescriptions[] = $rowPrescriptions;
 }
-$stmt4->fetch();
-$stmt4->close();
+$stmt2->fetch();
+$stmt2->close();
 
   //changes the medication_id to medication name
 for($i = 0; $i < count($prescriptions); $i++){
@@ -138,44 +165,59 @@ for($i = 0; $i < count($prescriptions); $i++) {
   $stmt->close();
 
   $prescriptions[$i][1] = $doctor_title . " " . $doctor_name;
-}
-
-
-  //changes patient_id to the patient name
-for($i = 0; $i < count($prescriptions); $i++){
   $prescriptions[$i][0] = $patient_title . " " . $patient_last_name;
 }
 
 
 //populates the messages info
 
-$stmt7 = $db->prepare("SELECT threadId, patient_patientId, doctor_doctorId FROM thread WHERE patient_patientId = ?");
-$stmt7->bind_param('i', $patient_id);
-$stmt7->execute();
-//$result = $stmt7->get_result();
-//while ($row = $result->fetch_assoc()) {
-//  array_push($message_thread_id, "7");
-//}
-$stmt7->bind_result($message_thread_id, $message_patient_id, $message_doctor_id);
-$stmt7->fetch();
-$stmt7->close();
 
-$stmt8 = $db->prepare("SELECT body, timeWritten, sender FROM message WHERE thread_threadId = ?");
-$stmt8->bind_param('i', $message_thread_id);
-$stmt8->execute();
-$stmt8->bind_result($message_body, $message_time_written, $message_sender_type);
-$stmt8->fetch();
-$stmt8->close();
 
-$stmt9 = $db->prepare("SELECT title, lastName  FROM doctor WHERE doctorId = ?");
-$stmt9->bind_param('i', $message_doctor_id);
-$stmt9->execute();
-$stmt9->bind_result($message_sender_title, $message_sender_name);
-$stmt9->fetch();
-$stmt9->close();
+$stmt3 = $db->prepare("SELECT threadId, patient_patientId, doctor_doctorId FROM thread WHERE patient_patientId = ?");
+$stmt3->bind_param('i', $patient_id);
+$stmt3->execute();
+$resultThreads = $stmt3->get_result();
+  while($rowThreads = $resultThreads->fetch_array(MYSQLI_NUM)){
+    $threads[] = $rowThreads;
+  }
+$stmt3->fetch();
+$stmt3->close();
 
-$message_sender_title = $patient_title;
-$message_sender_name = $patient_last_name;
+for($i = 0; $i < count($threads); $i++){
+  $query = $threads[$i][2];
+  $doctor_title = "";
+  $doctor_name = "";
+
+  $stmt = $db->prepare("SELECT title, lastName  FROM doctor WHERE doctorId = ?");
+  $stmt->bind_param('i', $query);
+  $stmt->execute();
+  $stmt->bind_result($doctor_title, $doctor_name);
+  $stmt->fetch();
+  $stmt->close();
+
+  $threads[$i][1] = $patient_title . " " . $patient_last_name;
+  $threads[$i][2] = $doctor_title . " " . $doctor_name;
+
+}
+
+
+for($i = 0; $i < count($threads); $i++){
+  $query = $threads[$i][0];
+  $messages = array();
+
+  $stmt = $db->prepare("SELECT body, timeWritten, sender FROM message WHERE thread_threadId = ?");
+  $stmt->bind_param('i', $query);
+  $stmt->execute();
+  $resultMessages = $stmt->get_result();
+  while($rowMessages = $resultMessages->fetch_array(MYSQLI_NUM)){
+    $messages[] = $rowMessages;
+  }
+  $stmt->fetch();
+  $stmt->close();
+
+  array_push($threadMessages, $messages);
+
+}
 
 //populates medical document info
 $stmt11 = $db->prepare("SELECT patient_patientId, doctor_doctorId, title, info, file, dateUploaded FROM medicaldocument WHERE patient_patientId = ?");
@@ -202,15 +244,8 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
   $stmt->close();
 
   $medicalDocuments[$i][1] = $doctor_title . " " . $doctor_name;
-}
-
-  //changes the value in the array from the patient id to the patient name
-for($i = 0; $i < count($medicalDocuments); $i++){
   $medicalDocuments[$i][0] = $patient_title . " " . $patient_last_name;
 }
-
-
-
 ?>
 
 <!doctype html>
@@ -442,34 +477,59 @@ for($i = 0; $i < count($medicalDocuments); $i++){
   </section>
   <section class="grid" id="appointments_content">
     <article><h1>Upcoming Appointments</h1></article>
-    <article>
-      <h1> <?php echo $appointment_time?></h1>
-      <h2> <?php echo $appointment_location_name ?></h2>
-      <h2> <?php echo $appointment_location_address?></h2>
-      <h2> <?php echo $appointment_location_city . " " . $appointment_location_postal ?></h2>
-      <h2> <?php echo $appointment_doctor_title . " " . $appointment_doctor_last_name?> </h2>
-    </article>
-    <article></article>
-    <article></article>
+    <?php
+    for($i = 0; $i < count($appointments); $i++)
+    { ?>
+      <article>
+        <h2> <?php echo $appointments[$i][0] ?> </h2>
+        <h2> <?php echo $appointments[$i][1] ?> </h2>
+        <h2> <?php echo $appointments[$i][2] ?> </h2>
+        <h2> <?php echo $appointments[$i][3] ?> </h2>
+        <h2> <?php echo $appointments[$i][4] ?> </h2>
+        <h2> <?php echo $appointments[$i][5] ?> </h2>
+        <h2> <?php echo $locations[$i][0] ?> </h2>
+        <h2> <?php echo $locations[$i][1] ?> </h2>
+        <h2> <?php echo $locations[$i][2] ?> </h2>
+        <h2> <?php echo $locations[$i][3] ?> </h2>
+        <h2> <?php echo $locations[$i][4] ?> </h2>
+        <h2> <?php echo $locations[$i][5] ?> </h2
+      </article>
+    <?php } ?>
   </section>
 
   <section class="grid" id="messages_content">
     <article><h1>Your Messages</h1></article>
-    <article class="message">
-      <h2> <?php echo $message_sender_title . " " . $message_sender_name?> </h2>
-      <h2> <?php echo $message_reciever_title . " " . $message_reciever_name?> </h2>
-      <h2> <?php echo $message_body?> </h2>
-      <h2> <?php echo $message_time_written?> </h2>
-    </article>
-    <article class="message">Message 2</article>
-    <article class="message">Message 3</article>
-    <article class="message">Message 4</article>
+    <?php
+    for($i = 0; $i < count($threadMessages); $i++)
+    { ?>
+      <article>
+        <?php
+        for($v = 0; $v < count($threadMessages[$i]); $v++)
+        { ?>
+          <?php if($threadMessages[$i][$v][2] == "patient")
+          { ?>
+            <h2>Sender <?php echo $threads[$i][1] ?> </h2>
+            <h2>Reciever <?php echo $threads[$i][2] ?> </h2>
+            <h2><?php echo $threadMessages[$i][$v][0] ?></h2>
+            <h2><?php echo $threadMessages[$i][$v][1] ?></h2>
+          <?php } ?>
+
+          <?php if($threadMessages[$i][$v][2] == "doctor")
+          { ?>
+            <h2>Sender <?php echo $threads[$i][2] ?> </h2>
+            <h2>Reciever <?php echo $threads[$i][1] ?> </h2>
+            <h2><?php echo $threadMessages[$i][$v][0] ?></h2>
+            <h2><?php echo $threadMessages[$i][$v][1] ?></h2>
+           <?php  } ?>
+        <?php } ?>
+      </article>
+    <?php } ?>
   </section>
 
   <section class="grid" id="prescriptions_content">
     <article><h1>Your Prescriptions</h1></article>
     <?php
-    for($i = 0; $i < 1; $i++)
+    for($i = 0; $i < count($prescriptions); $i++)
     { ?>
       <article>
         <h2> <?php echo $prescriptions[$i][0] ?> </h2>
