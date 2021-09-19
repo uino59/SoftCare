@@ -54,7 +54,13 @@ $message_reciever_title = "";
 $message_reciever_name = "";
 
 //medical document info
-$medicalImage = array();
+//  medicalDocuments[x][0] = patientId
+//                     [1] = doctorId
+//                     [2] = title
+//                     [3] = info
+//                     [4] = blobinfo
+//                     [5] = dateUploaded
+$medicalDocuments = array();
 
 //populates patient info
 $stmt = $db->prepare("SELECT patientId, title, firstName, lastName FROM patient WHERE phn = ?");
@@ -86,6 +92,8 @@ $stmt3->execute();
 $stmt3->bind_result($appointment_doctor_title, $appointment_doctor_first_name, $appointment_doctor_last_name);
 $stmt3->fetch();
 $stmt3->close();
+
+
 
 // populates the prescription info
 $stmt4 = $db->prepare("SELECT medication_medicationId, dosage, amount, instructions, refillsAuthorized, refillDate, doctor_doctorId  FROM prescription WHERE patient_patientId = ?");
@@ -143,15 +151,16 @@ $message_sender_name = $patient_last_name;
 $stmt11 = $db->prepare("SELECT patient_patientId, doctor_doctorId, title, info, file, dateUploaded FROM medicaldocument WHERE patient_patientId = ?");
 $stmt11->bind_param('i', $patient_id);
 $stmt11->execute();
-$resultMedicalImage = $stmt11->get_result();
-  while ($rowMedicalImage = $resultMedicalImage->fetch_array(MYSQLI_NUM)) {
-      $medicalImage[] = $rowMedicalImage;
+$resultmedicalDocuments = $stmt11->get_result();
+  while ($rowmedicalDocuments = $resultmedicalDocuments->fetch_array(MYSQLI_NUM)) {
+      $medicalDocuments[] = $rowmedicalDocuments;
   }
 $stmt11->fetch();
 $stmt11->close();
+
   //changes the value in the array from the doctor id to the dr. name
-for($i = 0; $i < count($medicalImage); $i++) {
-  $query = $medicalImage[$i][1];
+for($i = 0; $i < count($medicalDocuments); $i++) {
+  $query = $medicalDocuments[$i][1];
   $doctor_title = "";
   $doctor_name = "";
 
@@ -162,12 +171,12 @@ for($i = 0; $i < count($medicalImage); $i++) {
   $stmt->fetch();
   $stmt->close();
 
-  $medicalImage[$i][1] = $doctor_title . " " . $doctor_name;
+  $medicalDocuments[$i][1] = $doctor_title . " " . $doctor_name;
 }
 
   //changes the value in the array from the patient id to the patient name
-for($i = 0; $i < count($medicalImage); $i++){
-  $medicalImage[$i][0] = $patient_title . " " . $patient_last_name;
+for($i = 0; $i < count($medicalDocuments); $i++){
+  $medicalDocuments[$i][0] = $patient_title . " " . $patient_last_name;
 }
 
 
@@ -441,15 +450,19 @@ for($i = 0; $i < count($medicalImage); $i++){
   </section>
 
   <section class="grid" id="medicaldocs_content">
-    <article>
-      <h2> <?php echo $medicalImage[0][0] ?> </h2>
-      <h2> <?php echo $medicalImage[0][1] ?> </h2>
-      <h2> <?php echo $medicalImage[0][2] ?> </h2>
-      <h2> <?php echo $medicalImage[0][3] ?> </h2>
-      <h2> <?php echo $medicalImage[0][5] ?> </h2>
-      <h2> <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $medicalImage[0][4] ).'"/>'  ?> </h2>
-    </article>
-    <article></article>
+
+    <?php
+      for($i = 0; $i < count($medicalDocuments); $i++)
+        { ?>
+          <article>
+            <h2> <?php echo $medicalDocuments[$i][0] ?> </h2>
+            <h2> <?php echo $medicalDocuments[$i][1] ?> </h2>
+            <h2> <?php echo $medicalDocuments[$i][2] ?> </h2>
+            <h2> <?php echo $medicalDocuments[$i][3] ?> </h2>
+            <h2> <?php echo $medicalDocuments[$i][5] ?> </h2>
+            <h2> <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $medicalDocuments[$i][4] ).'"/>'  ?> </h2>
+          </article>
+    <?php } ?>
   </section>
 
 
