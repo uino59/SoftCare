@@ -47,6 +47,7 @@ $locations = array();
 //                     [7] = refillsAuthorized
 //                     [8] = refillDate
 //                     [9] = refillRequested
+//                     [10]= prescriptionId
 $prescriptions = array();
 
 
@@ -126,7 +127,7 @@ for($i = 0; $i < count($appointments); $i++) {
 
 
 //populates the prescriptions info
-$stmt2 = $db->prepare("SELECT patient_patientId, doctor_doctorId, medication_medicationId, amount, dosage, instructions, datePrescribed, refillsAuthorized, refillDate, refillRequested  FROM prescription WHERE patient_patientId = ?");
+$stmt2 = $db->prepare("SELECT patient_patientId, doctor_doctorId, medication_medicationId, amount, dosage, instructions, datePrescribed, refillsAuthorized, refillDate, refillRequested, prescriptionId  FROM prescription WHERE patient_patientId = ?");
 $stmt2->bind_param('i', $patient_id);
 $stmt2->execute();
 $resultPrescriptions = $stmt2->get_result();
@@ -579,7 +580,35 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                 <td class="column3"><?php echo $prescriptions[$i][5] ?></td>
                 <td class="column4"><?php echo $prescriptions[$i][4] ?></td>
                 <td class="column5"><?php echo $prescriptions[$i][6] . " -<br>" . $prescriptions[$i][8]  ?></td>
-                <td class="column6"><button type="button">Renew</button></td>
+                <td class="column6">
+<!--                  increments the refillRequested Value when form is submitted-->
+                  <?php
+                    $renew = "renew" . $i;
+                    $query = $prescriptions[$i][10];
+                    $value = $prescriptions[$i][9] + 1;
+
+                    if(isset($_POST[$renew])) {
+                      if($value > $prescriptions[$i][7])
+                      {
+                        echo "You have no more refills remaining";
+                      }
+                      if(date("Y-m-d") < $prescriptions[$i][8])
+                      {
+                        echo "Refill is not authorized until: " . $prescriptions[$i][8];
+                      }
+                      else {
+                        $stmt = $db->prepare("UPDATE prescription SET refillRequested=$value WHERE prescriptionId = ?");
+                        $stmt->bind_param('i', $query);
+                        $stmt->execute();
+                        $stmt->close();
+                        echo "Refills requested: " . $value;
+                      }
+                    }
+                  ?>
+                  <form method="post">
+                    <input type="submit" name="<?php echo $renew ?>" value="Renew"/>
+                  </form>
+                </td>
               </tr>
             <?php } ?>
             </tbody>
