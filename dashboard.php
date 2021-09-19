@@ -17,6 +17,7 @@ $patient_address = "";
 $patient_city = "";
 $patient_country = "";
 
+//appointment info
 $appointment_time ="";
 $appointment_location_id = "";
 $appointment_location_address = "";
@@ -28,12 +29,27 @@ $appointment_doctor_title = "";
 $appointment_doctor_first_name = "";
 $appointment_doctor_last_name = "";
 
+$prescription_medication_id = "";
+$prescription_doctor_id = "";
+$prescription_medication_name = "";
+$prescription_dosage = "";
+$prescription_amount = "";
+$prescription_instructions = "";
+$prescription_refills_authorized = "";
+$prescription_refills_date = "";
+$prescription_doctor_title = "";
+$prescription_doctor_last_name = "";
+
+
+
 $stmt = $db->prepare("SELECT patientId, firstName, lastName FROM patient WHERE phn = ?");
 $stmt->bind_param('s', $_SESSION["usrname"]);
 $stmt->execute();
 $stmt->bind_result($patient_id, $patient_first_name, $patient_last_name);
 $stmt->fetch();
 $stmt->close();
+
+//Populates the appointment info
 
 $stmt1 = $db->prepare("SELECT time, doctor_doctorId, location_locationId FROM appointment WHERE patient_patientId = ?");
 $stmt1->bind_param('i', $patient_id);
@@ -55,6 +71,32 @@ $stmt3->execute();
 $stmt3->bind_result($appointment_doctor_title, $appointment_doctor_first_name, $appointment_doctor_last_name);
 $stmt3->fetch();
 $stmt3->close();
+
+// populates the prescription info
+$stmt4 = $db->prepare("SELECT medication_medicationId, dosage, amount, instructions, refillsAuthorized, refillDate, doctor_doctorId  FROM prescription WHERE patient_patientId = ?");
+$stmt4->bind_param('i', $patient_id);
+$stmt4->execute();
+$stmt4->bind_result($prescription_medication_id, $prescription_dosage, $prescription_amount, $prescription_instructions, $prescription_refills_authorized, $prescription_refills_date, $prescription_doctor_id);
+$stmt4->fetch();
+$stmt4->close();
+
+$stmt5 = $db->prepare("SELECT name  FROM medication WHERE medicationId = ?");
+$stmt5->bind_param('i', $prescription_medication_id);
+$stmt5->execute();
+$stmt5->bind_result($prescription_medication_name);
+$stmt5->fetch();
+$stmt5->close();
+
+$stmt6 = $db->prepare("SELECT title, lastName  FROM doctor WHERE doctorId = ?");
+$stmt6->bind_param('i', $prescription_doctor_id);
+$stmt6->execute();
+$stmt6->bind_result($prescription_doctor_title, $prescription_doctor_last_name);
+$stmt6->fetch();
+$stmt6->close();
+
+
+
+
 ?>
 
 <!doctype html>
@@ -295,26 +337,32 @@ $stmt3->close();
     </article>
     <article></article>
     <article></article>
-
   </section>
+
   <section class="grid" id="messages_content">
     <article><h1>Your Messages</h1></article>
     <article class="message">Message 1</article>
     <article class="message">Message 2</article>
     <article class="message">Message 3</article>
     <article class="message">Message 4</article>
-
-
   </section>
+
   <section class="grid" id="prescriptions_content">
     <article><h1>Your Prescriptions</h1></article>
-    <article class="prescription">Prescription 1</article>
+    <article class="prescription"><h1> <?php echo $appointment_time?></h1>
+      <h2> <?php echo $prescription_medication_name . " " . $prescription_dosage ?></h2>
+      <h2> <?php echo $prescription_amount?></h2>
+      <h2> <?php echo $prescription_instructions ?></h2>
+      <h2> <?php echo $prescription_refills_authorized ?></h2>
+      <h2> <?php echo $prescription_refills_date ?></h2>
+      <h2> <?php echo $prescription_doctor_title. " " . $prescription_doctor_last_name?> </h2>
+    </article>
     <article class="prescription">Prescription 2</article>
   </section>
+
   <section class="grid" id="medicaldocs_content">
     <article></article>
     <article></article>
-
   </section>
 
 
