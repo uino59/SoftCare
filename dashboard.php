@@ -476,17 +476,16 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
     <article>Documents</article>
   </section>
   <section class="grid" id="appointments_content">
-    <article><h1>Upcoming Appointments</h1></article>
-
-    <article>
+    <h1>Upcoming Appointments</h1>
+    <article class="appointments-table">
       <div class="limiter">
         <div class="table100">
           <table>
             <thead>
               <tr class="table100-head">
-                <th class="column2">Date & Time</th>
-                <th class="column1">Reason For Visit</th>
-                <th class="column4">Doctor</th>
+                <th class="column1">Date & Time</th>
+                <th class="column2">Doctor</th>
+                <th class="column3">Reason For Visit</th>
                 <th class="column4">Location</th>
                 <th class="column6">Date Scheduled</th>
               </tr>
@@ -494,9 +493,9 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
             <tbody>
             <?php for($i = 0; $i < count($appointments); $i++){ ?>
               <tr>
-                <td class="column2"><?php echo $appointments[$i][3] ?></td>
-                <td class="column1"><?php echo $appointments[$i][4] ?></td>
-                <td class="column4"><?php echo $appointments[$i][1] ?></td>
+                <td class="column1"><?php echo $appointments[$i][3] ?></td>
+                <td class="column2"><?php echo $appointments[$i][1] ?></td>
+                <td class="column3"><?php echo $appointments[$i][4] ?></td>
                 <td class="column4"><?php echo $locations[$i][0] . ",<br> " . $locations[$i][1] . ",<br> " . $locations[$i][2] . ",<br>" .
                     $locations[$i][3] . ",<br>" . $locations[$i][4] . ",<br>" . $locations[$i][5];   ?></td>
                 <td class="column6"><?php echo $appointments[$i][5] ?></td>
@@ -510,7 +509,7 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
   </section>
 
   <section class="grid" id="messages_content">
-    <article><h1>Your Messages</h1></article>
+    <h1>Your Messages</h1>
     <?php
     for($i = 0; $i < count($threadMessages); $i++)
     { ?>
@@ -539,41 +538,72 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
   </section>
 
   <section class="grid" id="prescriptions_content">
-    <article><h1>Your Prescriptions</h1></article>
-    <?php
-    for($i = 0; $i < count($prescriptions); $i++)
-    { ?>
-      <article>
-        <h2> <?php echo $prescriptions[$i][0] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][1] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][2] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][3] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][4] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][5] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][6] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][7] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][8] ?> </h2>
-        <h2> <?php echo $prescriptions[$i][9] ?> </h2>
-      </article>
-    <?php } ?>
-
+    <h1>Your Prescriptions</h1>
+    <article class="prescription-table">
+      <div class="limiter">
+        <div class="table100">
+          <table>
+            <thead>
+            <tr class="table100-head">
+              <th class="column1">Prescribing Doctor</th>
+              <th class="column2">Medication</th>
+              <th class="column3">Directions</th>
+              <th class="column4">Dosage</th>
+              <th class="column5">Course</th>
+              <th class="column6">Renew</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php for($i = 0; $i < count($prescriptions); $i++){ ?>
+              <tr>
+                <td class="column1"><?php echo $prescriptions[$i][1] ?></td>
+                <td class="column2"><?php echo $prescriptions[$i][2] . " x" . $prescriptions[$i][3]  ?></td>
+                <td class="column3"><?php echo $prescriptions[$i][5] ?></td>
+                <td class="column4"><?php echo $prescriptions[$i][4] ?></td>
+                <td class="column5"><?php echo $prescriptions[$i][6] . " -<br>" . $prescriptions[$i][8]  ?></td>
+                <td class="column6"><button type="button">Renew</button></td>
+              </tr>
+            <?php } ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </article>
   </section>
 
   <section class="grid" id="medicaldocs_content">
-
-    <?php
-      for($i = 0; $i < count($medicalDocuments); $i++)
-        { ?>
-          <article>
-            <h2> <?php echo $medicalDocuments[$i][0] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][1] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][2] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][3] ?> </h2>
-            <h2> <?php echo $medicalDocuments[$i][5] ?> </h2>
-            <h2> <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $medicalDocuments[$i][4] ).'"/>'  ?> </h2>
-          </article>
-    <?php } ?>
+    <h1>Your Medical Documents</h1>
+    <article class="med-docs-table">
+      <div class="limiter">
+        <div class="table100">
+          <table>
+            <thead>
+            <tr class="table100-head">
+              <th class="column1">Doctor</th>
+              <th class="column2">File Description</th>
+              <th class="column3">Notes</th>
+              <th class="column4">Date</th>
+              <th class="column6">File</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php for($i = 0; $i < count($medicalDocuments); $i++){ ?>
+              <tr>
+                <td class="column1"><?php echo $medicalDocuments[$i][1] ?></td>
+                <td class="column2"><?php echo $medicalDocuments[$i][2] ?></td>
+                <td class="column3"><?php echo $medicalDocuments[$i][3] ?> </h2></td>
+                <td class="column4"><?php echo $medicalDocuments[$i][5] ?></td>
+                <td class="column6"><button type="button">Download</button></td>
+              </tr>
+            <?php } ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </article>
   </section>
+<!--<?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $medicalDocuments[$i][4] ).'"/>'  ?> Need to work out how to make this file downloadable-->
+
 
 
 
