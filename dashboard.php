@@ -26,6 +26,7 @@ $patient_country = "";
 //                     [5] = dateScheduled
 //                     [6] = cancellationRequested
 //                     [7] = rescheduleRequested
+//                     [8] = appointmentId
 $appointments = array();
 //         locations[x][0] = address
 //                     [1] = city
@@ -84,7 +85,7 @@ $stmt->close();
 
 
 //Populates the appointment info
-$stmt1 = $db->prepare("SELECT patient_patientId, doctor_doctorId, location_locationId, appointmentTime, reasonForVisit, dateScheduled, cancellationRequested, rescheduleRequested FROM appointment WHERE patient_patientId = ?");
+$stmt1 = $db->prepare("SELECT patient_patientId, doctor_doctorId, location_locationId, appointmentTime, reasonForVisit, dateScheduled, cancellationRequested, rescheduleRequested, appointmentId FROM appointment WHERE patient_patientId = ?");
 $stmt1->bind_param('i', $patient_id);
 $stmt1->execute();
 $resultAppointments = $stmt1->get_result();
@@ -489,6 +490,8 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                 <th class="column4">Doctor</th>
                 <th class="column4">Location</th>
                 <th class="column6">Date Scheduled</th>
+                <th class="column6"> Cancel</th>
+                <th class="column6"> Reschedule</th>
               </tr>
             </thead>
             <tbody>
@@ -500,6 +503,28 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                 <td class="column4"><?php echo $locations[$i][0] . ",<br> " . $locations[$i][1] . ",<br> " . $locations[$i][2] . ",<br>" .
                     $locations[$i][3] . ",<br>" . $locations[$i][4] . ",<br>" . $locations[$i][5];   ?></td>
                 <td class="column6"><?php echo $appointments[$i][5] ?></td>
+                <td class="column6">
+<!--                  changes the boolean to true for cancellationRequested and notifies user if cancellation has already been requested-->
+                  <?php
+                  $cancel = "cancel" . $i;
+                  $query = $appointments[$i][8];
+
+                  if(isset($_POST[$cancel])) {
+
+                      $stmt = $db->prepare("DELETE FROM appointment WHERE appointmentId = ?");
+                      $stmt->bind_param('i', $query);
+                      $stmt->execute();
+                      $stmt->close();
+                      echo "This appointment has been cancelled please call in order to rebook";
+
+                  }
+                  ?>
+                  <form method="post">
+                    <input type="submit" name="<?php echo $cancel ?>" value="Cancel"/>
+                  </form>
+                </td>
+
+
               </tr>
             <?php } ?>
             </tbody>
