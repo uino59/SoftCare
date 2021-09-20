@@ -427,8 +427,11 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
         </a>
       </li>
 
-      <! -- Lazy spacing -->
+      <li class="menu-heading">
+        <h3>Settings</h3>
+      </li>
       <li>
+        <a href="logout.php">Log Out</a>
       </li>
 
       <li>
