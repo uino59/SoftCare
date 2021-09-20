@@ -504,7 +504,7 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                     $locations[$i][3] . ",<br>" . $locations[$i][4] . ",<br>" . $locations[$i][5];   ?></td>
                 <td class="column6"><?php echo $appointments[$i][5] ?></td>
                 <td class="column6">
-<!--                  changes the boolean to true for cancellationRequested and notifies user if cancellation has already been requested-->
+<!--                  deletes the appointment from the database-->
                   <?php
                   $cancel = "cancel" . $i;
                   $query = $appointments[$i][8];
@@ -523,7 +523,30 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                     <input type="submit" name="<?php echo $cancel ?>" value="Cancel"/>
                   </form>
                 </td>
+                <td class="column6">
+                  <!--                  changes the rescheduleRequested boolean and notifies user if reschedule has already been requested-->
+                  <?php
+                  $reschedule = "reschedule" . $i;
+                  $query = $appointments[$i][8];
 
+                  if(isset($_POST[$reschedule])) {
+                    if($appointments[$i][7] == 1){
+                      echo "You have already requested a reschedule. Your doctor should contact you shortly to arrange a more convenient time";
+                    }
+                    else {
+                      $stmt = $db->prepare("UPDATE appointment SET rescheduleRequested = 1 WHERE appointmentId = ?");
+                      $stmt->bind_param('i', $query);
+                      $stmt->execute();
+                      $stmt->close();
+
+                      echo "This appointment has been requested to reschedule, please wait for your doctor to contact you";
+                    }
+                  }
+                  ?>
+                  <form method="post">
+                    <input type="submit" name="<?php echo $reschedule ?>" value="Reschedule"/>
+                  </form>
+                </td>
 
               </tr>
             <?php } ?>
