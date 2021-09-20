@@ -592,16 +592,28 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                       {
                         echo "You have no more refills remaining";
                       }
-                      if(date("Y-m-d") < $prescriptions[$i][8])
+                      else if(date("Y-m-d") < $prescriptions[$i][8])
                       {
                         echo "Refill is not authorized until: " . $prescriptions[$i][8];
                       }
                       else {
-                        $stmt = $db->prepare("UPDATE prescription SET refillRequested=$value WHERE prescriptionId = ?");
+                        $requestDate = date_create($prescriptions[$i][8]);
+                        $fillDate = date_create($prescriptions[$i][6]);
+                        $difference = date_diff($fillDate, $requestDate);
+                        $newDate = $requestDate->add($difference);
+                        $newDate = $newDate->format('Y-m-d');
+
+                        $stmt = $db->prepare("UPDATE prescription SET refillRequested = '$value' WHERE prescriptionId = ?");
                         $stmt->bind_param('i', $query);
                         $stmt->execute();
                         $stmt->close();
+
+                        $stmt10 = $db->prepare("UPDATE prescription SET refillDate = '$newDate' WHERE prescriptionId = ?");
+                        $stmt10->bind_param('i', $query);
+                        $stmt10->execute();
+                        $stmt10->close();
                         echo "Refills requested: " . $value;
+
                       }
                     }
                   ?>
