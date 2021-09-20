@@ -470,11 +470,50 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
     </div>
   </section>
   <section class="grid" id="home_content">
-    <article>Upcoming appointments</article>
-    <article>Messages</article>
-    <article>Prescriptions</article>
-    <article>Documents</article>
+    <article>
+      <div class="home_banner">
+        <h3>Next Appointment</h3>
+      </div>
+      <div class="limiter">
+        <div class="table100">
+          <table>
+            <thead>
+            <tr class="table100-head">
+              <th class="column1">Date & Time</th>
+              <th class="column4">Doctor</th>
+              <th class="column4">Location</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="column1"><?php echo $appointments[0][3] ?></td>
+                <td class="column4"><?php echo $appointments[0][1] ?></td>
+                <td class="column4"><?php echo $locations[0][0] . ",<br> " . $locations[0][1] . ",<br> " . $locations[0][2] . ",<br>" .
+                    $locations[0][3] . ",<br>" . $locations[0][4] . ",<br>" . $locations[0][5];   ?></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </article>
+    <article>
+      <div class="home_banner">
+        <h3>Your Details<h3>
+      </div></article>
+    <article>
+      <div class="home_banner">
+        <h3>New Messages<h3>
+      </div>
+    </article>
+    <article>
+      <div class="home_banner">
+        <h3>Your prescriptions<h3>
+      </div>
+    </article>
   </section>
+
+
   <section class="grid" id="appointments_content">
     <h1>Upcoming Appointments</h1>
     <article class="appointments-table">
@@ -496,8 +535,8 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                 <td class="column2"><?php echo $appointments[$i][3] ?></td>
                 <td class="column1"><?php echo $appointments[$i][4] ?></td>
                 <td class="column4"><?php echo $appointments[$i][1] ?></td>
-                <td class="column4"><?php echo $locations[$i][0] . ",<br> " . $locations[$i][1] . ",<br> " . $locations[$i][2] . ",<br>" .
-                    $locations[$i][3] . ",<br>" . $locations[$i][4] . ",<br>" . $locations[$i][5];   ?></td>
+                <td class="column4"><?php echo $locations[$i][5] . ",<br>" . $locations[$i][0] . ",<br> " . $locations[$i][1] . ",<br> " . $locations[$i][2] . ",<br>" .
+                    $locations[$i][3] . ",<br>" . $locations[$i][4];   ?></td>
                 <td class="column6"><?php echo $appointments[$i][5] ?></td>
               </tr>
             <?php } ?>
@@ -598,7 +637,7 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
             <thead>
               <tr class="table100-head">
                 <th class="column7">Document Title</th>
-                <th class="column1">Doctors Comments</th>
+                <th class="column1">Doctor's Comments</th>
                 <th class="column7">Image</th>
                 <th class="column4">Doctor</th>
                 <th class="column4">Date Scheduled</th>

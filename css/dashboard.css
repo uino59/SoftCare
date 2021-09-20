@@ -293,12 +293,30 @@ body {
 
 .page-content .grid {
   display: grid;
-  /*grid-template-columns: repeat(2, 1fr);*/
   grid-gap: 30px;
 }
 
+#home_content {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+#home_content article {
+  min-height: 40vh;
+  width: 35vw;
+}
+
+#home_content article .home_banner{
+  width: 100%;
+  color: var(--page-header-txtColor);
+  width: 100%;
+  text-align: center;
+  height: fit-content;
+  padding: 10px;
+  background-color: var(--page-header-bgColor-hover);
+}
+
+
 .page-content .grid > article {
-  display: flex;
   height: 200px;
   background: var(--page-content-blockColor);
   border-radius: var(--border-radius);
