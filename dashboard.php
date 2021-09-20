@@ -62,6 +62,7 @@ $threads = array();
 //           threadMessages[x][y][0] = body of y message in x thread
 //           threadMessages[x][y][1] = timeWritten of y message in x thread
 //           threadMessages[x][y][2] = sender of y message in x thread
+//           threadMessages[x][y][3] = threadId of y message in x thread
 //
 $threadMessages = array();
 
@@ -207,7 +208,7 @@ for($i = 0; $i < count($threads); $i++){
   $query = $threads[$i][0];
   $messages = array();
 
-  $stmt = $db->prepare("SELECT body, timeWritten, sender FROM message WHERE thread_threadId = ?");
+  $stmt = $db->prepare("SELECT body, timeWritten, sender, thread_threadId FROM message WHERE thread_threadId = ?");
   $stmt->bind_param('i', $query);
   $stmt->execute();
   $resultMessages = $stmt->get_result();
@@ -562,7 +563,6 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
     <?php
     for($i = 0; $i < count($threadMessages); $i++)
     { ?>
-      <article>
         <div class="limiter">
           <div class="table100">
             <table>
@@ -598,9 +598,27 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                   <?php } ?>
               </tbody>
             </table>
+            <?php
+            $reply = "reply" . $i;
+            $timeCurrent = date("now");
+
+            if(isset($_POST[$reply])) {
+                $body = $_POST['messageBody'];
+
+                $threadId = $threads[$i][0];
+
+                $stmt = $db->prepare("INSERT INTO message (thread_threadId, body, timeWritten, sender) VALUES ('$threadId', '$body', '$timeCurrent', 'patient')");
+                $stmt->execute();
+                $stmt->close();
+
+            }
+            ?>
+            <form method="post">
+              <input style="width: 80vw; height: 100px;" type="text" name="messageBody">
+              <input type="submit" name="<?php echo $reply ?>" value="Reply"/>
+            </form>
           </div>
         </div>
-      </article>
     <?php } ?>
   </section>
 
