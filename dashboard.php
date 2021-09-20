@@ -82,8 +82,6 @@ $stmt->bind_result($patient_id, $patient_title, $patient_first_name, $patient_la
 $stmt->fetch();
 $stmt->close();
 
-
-
 //Populates the appointment info
 $stmt1 = $db->prepare("SELECT patient_patientId, doctor_doctorId, location_locationId, appointmentTime, reasonForVisit, dateScheduled, cancellationRequested, rescheduleRequested FROM appointment WHERE patient_patientId = ?");
 $stmt1->bind_param('i', $patient_id);
@@ -534,13 +532,63 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
     </article>
     <article>
       <div class="home_banner">
-        <h3>New Messages<h3>
+        <h3>New Messages</h3>
       </div>
-
+        <?php $lastThread = end($threadMessages);
+        if(end($lastThread)[2] == "doctor"){ ?>
+          <div class="limiter">
+            <div class="table100">
+              <table>
+                <tr class="table100-head">
+                  <th class="column4">New Message</th>
+                  <td>
+                    <a href="#" id="messages">View</a>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+      <?php } else {
+          echo ' <div class="limiter">
+        <div class="table100">
+          <table>
+            <thead>
+            <tr class="table100-head">
+              <th class="column2">You have no new messages</th>
+            </tr>
+            </thead>
+          </table>
+         </div>
+        </div>';
+        } ?>
     </article>
+
+
     <article>
       <div class="home_banner">
         <h3>Your prescriptions<h3>
+      </div>
+      <div class="limiter">
+        <div class="table100">
+          <table>
+            <thead>
+            <tr class="table100-head">
+              <th class="column2">Medication</th>
+              <th class="column4">Dosage</th>
+              <th class="column5">Course</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php for($i = 0; $i < count($prescriptions); $i++){ ?>
+              <tr>
+                <td class="column2"><?php echo $prescriptions[$i][2] . " x" . $prescriptions[$i][3]  ?></td>
+                <td class="column4"><?php echo $prescriptions[$i][4] ?></td>
+                <td class="column5"><?php echo $prescriptions[$i][6] . " -<br>" . $prescriptions[$i][8]  ?></td>
+              </tr>
+            <?php } ?>
+            </tbody>
+          </table>
+        </div>
       </div>
     </article>
   </section>
@@ -596,23 +644,23 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
                 <th class="column4">Date Sent</th>
               </tr>
               </thead>
-              <tbody>
+              <tbody><!-- YYY -->
                   <?php
                   for($v = 0; $v < count($threadMessages[$i]); $v++)
                   { ?>
                     <tr>
                     <?php if($threadMessages[$i][$v][2] == "patient")
                     { ?>
-                      <td class="column7"> <?php echo $threads[$i][1] ?> </td>
                       <td class="column7"> <?php echo $threads[$i][2] ?> </td>
+                      <td class="column7"> <?php echo $threads[$i][1] ?> </td>
                       <td class="column7"> <?php echo $threadMessages[$i][$v][0] ?> </td>
                       <td class="column4"> <?php echo $threadMessages[$i][$v][1] ?> </td>
                     <?php } ?>
 
                     <?php if($threadMessages[$i][$v][2] == "doctor")
                     { ?>
-                      <td class="column7"> <?php echo $threads[$i][2] ?> </td>
                       <td class="column7"> <?php echo $threads[$i][1] ?> </td>
+                      <td class="column7"> <?php echo $threads[$i][2] ?> </td>
                       <td class="column7"> <?php echo $threadMessages[$i][$v][0] ?> </td>
                       <td class="column4"> <?php echo $threadMessages[$i][$v][1] ?> </td>
                      <?php  } ?>
