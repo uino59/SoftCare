@@ -16,6 +16,8 @@ $patient_dob = "";
 $patient_address = "";
 $patient_city = "";
 $patient_country = "";
+$patient_email = "";
+$patient_phone = "";
 
 //appointment info
 //      appointments[x][0] = patientId
@@ -73,10 +75,10 @@ $threadMessages = array();
 $medicalDocuments = array();
 
 //populates patient info
-$stmt = $db->prepare("SELECT patientId, title, firstName, lastName FROM patient WHERE phn = ?");
+$stmt = $db->prepare("SELECT patientId, title, firstName, lastName, dob, phn, email, phone FROM patient WHERE phn = ?");
 $stmt->bind_param('s', $_SESSION["usrname"]);
 $stmt->execute();
-$stmt->bind_result($patient_id, $patient_title, $patient_first_name, $patient_last_name);
+$stmt->bind_result($patient_id, $patient_title, $patient_first_name, $patient_last_name, $patient_dob, $patient_phn, $patient_email, $patient_phone);
 $stmt->fetch();
 $stmt->close();
 
@@ -478,11 +480,12 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
         <div class="table100">
           <table>
             <thead>
-            <tr class="table100-head">
-              <th class="column1">Date & Time</th>
-              <th class="column4">Doctor</th>
-              <th class="column4">Location</th>
-            </tr>
+              <tr class="table100-head">
+                <th class="column1">Date & Time</th>
+                <th class="column4">Doctor</th>
+                <th class="column4">Location</th>
+              </tr>                                                                                                                                                                                                                                                                                                                                                        <tr class="table100-head">
+                                                                                                                                                                                                                                                                                                                                                                   </tr>
             </thead>
             <tbody>
               <tr>
@@ -500,11 +503,40 @@ for($i = 0; $i < count($medicalDocuments); $i++) {
     <article>
       <div class="home_banner">
         <h3>Your Details<h3>
-      </div></article>
+      </div>
+      <div class="limiter">
+        <div class="table100">
+          <table>
+            <tr class="table100-head">
+              <th class="column4">Name</th>
+              <td class="column6"><?php echo $patient_title . " " . $patient_first_name . " " . $patient_last_name; ?></td>
+
+            </tr>
+            <tr class="table100-head">
+              <th class="column4">Personal Health Number</th>
+              <td class="column6"><?php echo $patient_phn; ?></td>
+            </tr>
+            <tr class="table100-head">
+              <th class="column4">Date of Birth</th>
+              <td class="column6"><?php echo $patient_dob; ?></td>
+            </tr>
+            <tr class="table100-head">
+              <th class="column4">Email</th>
+              <td class="column6"><?php echo $patient_email; ?></td>
+            </tr>
+            <tr class="table100-head">
+              <th class="column4">Phone Number</th>
+              <td class="column6"><?php echo $patient_phone; ?></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </article>
     <article>
       <div class="home_banner">
         <h3>New Messages<h3>
       </div>
+
     </article>
     <article>
       <div class="home_banner">
